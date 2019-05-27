@@ -45,20 +45,20 @@ public class Snake {
     // Loads all the images corresponding to the snake
     private void loadImages() {
         try {
-            bodyImageVertical = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\bodyVertical.png"));
-            bodyImageHorizontal = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\bodyHorizontal.png"));
-            headImageDown = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\headDown.png"));
-            headImageUp = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\headUp.png"));
-            headImageRight = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\headRight.png"));
-            headImageLeft = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\headLeft.png"));
-            tailImageDown = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\tailDown.png"));
-            tailImageUp = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\tailUp.png"));
-            tailImageRight = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\tailRight.png"));
-            tailImageLeft = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\tailLeft.png"));
-            upAndRightTurn = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\upAndRightTurn.png"));
-            downAndRightTurn = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\downAndRightTurn.png"));
-            upAndLeftTurn = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\upAndLeftTurn.png"));
-            downAndLeftTurn = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\downAndLeftTurn.png"));
+            bodyImageVertical = ImageIO.read(new File("images\\bodyVertical.png"));
+            bodyImageHorizontal = ImageIO.read(new File("images\\bodyHorizontal.png"));
+            headImageDown = ImageIO.read(new File("images\\headDown.png"));
+            headImageUp = ImageIO.read(new File("images\\headUp.png"));
+            headImageRight = ImageIO.read(new File("images\\headRight.png"));
+            headImageLeft = ImageIO.read(new File("images\\headLeft.png"));
+            tailImageDown = ImageIO.read(new File("images\\tailDown.png"));
+            tailImageUp = ImageIO.read(new File("images\\tailUp.png"));
+            tailImageRight = ImageIO.read(new File("images\\tailRight.png"));
+            tailImageLeft = ImageIO.read(new File("images\\tailLeft.png"));
+            upAndRightTurn = ImageIO.read(new File("images\\upAndRightTurn.png"));
+            downAndRightTurn = ImageIO.read(new File("images\\downAndRightTurn.png"));
+            upAndLeftTurn = ImageIO.read(new File("images\\upAndLeftTurn.png"));
+            downAndLeftTurn = ImageIO.read(new File("images\\downAndLeftTurn.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
