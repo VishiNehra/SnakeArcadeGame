@@ -9,16 +9,17 @@ import java.io.IOException;
 
 public class Treat extends Object {
 
-    public static final int WIDTH = GamePanel.CHECKER_SIZE;
-    public static final int HEIGHT = GamePanel.CHECKER_SIZE;
+    private static final int WIDTH = GamePanel.CHECKER_SIZE;
+    private static final int HEIGHT = GamePanel.CHECKER_SIZE;
     private Image IMAGE;
 
     // Constructs a treat at given coordinates and loads its image
     public Treat(int posX, int posY) {
         super(posX, posY, WIDTH, HEIGHT);
         try {
-            IMAGE = ImageIO.read(new File("C:\\Users\\vishw\\IdeaProjects\\Snake Arcade Game\\images\\apple.png"));
+            IMAGE = ImageIO.read(new File("images\\apple.png"));
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
