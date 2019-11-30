@@ -2,7 +2,7 @@ package main.model;
 
 import com.sun.javafx.scene.traversal.Direction;
 
-public class Object {
+public class Figure {
 
     protected int posX;
     protected int posY;
@@ -11,7 +11,7 @@ public class Object {
     protected Direction direction;
 
     // Constructs an object with given position and size
-    public Object(int posX, int posY, int width, int height) {
+    public Figure(int posX, int posY, int width, int height) {
         this.posX = posX;
         this.posY = posY;
         this.width = width;
@@ -19,7 +19,7 @@ public class Object {
     }
 
     // Constructs an object with given position, size and direction
-    public Object(int posX, int posY, int width, int height, Direction direction) {
+    public Figure(int posX, int posY, int width, int height, Direction direction) {
         this.posX = posX;
         this.posY = posY;
         this.width = width;
@@ -27,19 +27,19 @@ public class Object {
         this.direction = direction;
     }
 
-    public void setPosX(int x) {
+    protected void setPosX(int x) {
         posX = x;
     }
 
-    public void setPosY(int y) {
+    protected void setPosY(int y) {
         posY = y;
     }
 
-    public void incrementPosX(int dx) {
+    protected void incrementPosX(int dx) {
         posX += dx;
     }
 
-    public void incrementPosY(int dy) {
+    protected void incrementPosY(int dy) {
         posY += dy;
     }
 
@@ -57,13 +57,5 @@ public class Object {
 
     public int getPosY() {
         return posY;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 }

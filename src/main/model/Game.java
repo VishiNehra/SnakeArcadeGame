@@ -27,13 +27,12 @@ public class Game extends Observable {
     // Spawns a treat randomly on the screen (ensures treat isn't on the snake)
     private void initializeTreat() {
         Random random = new Random(); // creates a random treat such that it fits in the checkerboard pattern
-        int randomX = GamePanel.CHECKER_SIZE/2 + GamePanel.CHECKER_SIZE*Math.round(random.nextInt(Game.WIDTH)/GamePanel.CHECKER_SIZE);
-        int randomY = GamePanel.CHECKER_SIZE/2 + GamePanel.CHECKER_SIZE*Math.round(random.nextInt(Game.HEIGHT)/GamePanel.CHECKER_SIZE);
+        int randomX, randomY;
         // To ensure that treat does not fall on snake
-        while(snake.containsCoordinate(randomX, randomY)) { // loop continues until treat location is different from that of snake
+        do { // loop continues until treat location is different from that of snake
             randomX = GamePanel.CHECKER_SIZE/2 + GamePanel.CHECKER_SIZE*Math.round(random.nextInt(Game.WIDTH)/GamePanel.CHECKER_SIZE);
             randomY = GamePanel.CHECKER_SIZE/2 + GamePanel.CHECKER_SIZE*Math.round(random.nextInt(Game.HEIGHT)/GamePanel.CHECKER_SIZE);
-        }
+        } while (snake.containsCoordinate(randomX, randomY));
         treat = new Treat(randomX, randomY);
     }
 

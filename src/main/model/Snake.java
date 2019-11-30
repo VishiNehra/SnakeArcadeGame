@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Snake {
@@ -15,7 +16,7 @@ public class Snake {
     public static final int HEIGHT = GamePanel.CHECKER_SIZE;
     public static final int SPEED = GamePanel.CHECKER_SIZE;
 
-    private java.util.List<Object> body;
+    private java.util.List<Figure> body;
 
     private Image bodyImageVertical;
     private Image bodyImageHorizontal;
@@ -34,11 +35,11 @@ public class Snake {
 
     // Constructs a snake at given coordinates, with 4 body parts and loads images
     public Snake(int posX, int posY) {
-        body = new LinkedList<>();
-        body.add(new Object(posX, posY, WIDTH, HEIGHT, Direction.UP));
-        body.add(new Object(posX, posY + HEIGHT, WIDTH, HEIGHT, Direction.UP));
-        body.add(new Object(posX, posY + 2 * HEIGHT, WIDTH, HEIGHT, Direction.UP));
-        body.add(new Object(posX, posY + 3 * HEIGHT, WIDTH, HEIGHT, Direction.UP));
+        body = new LinkedList<>(Arrays.asList(
+            new Figure(posX, posY, WIDTH, HEIGHT, Direction.UP), // body parts one after another
+            new Figure(posX, posY + HEIGHT, WIDTH, HEIGHT, Direction.UP),
+            new Figure(posX, posY + 2 * HEIGHT, WIDTH, HEIGHT, Direction.UP),
+            new Figure(posX, posY + 3 * HEIGHT, WIDTH, HEIGHT, Direction.UP)));
         loadImages();
     }
 
@@ -73,22 +74,23 @@ public class Snake {
             body.get(i).setDirection(body.get(i-1).getDirection());
         }
 
-        Object head = getHead();
-        if (head.getDirection() == Direction.RIGHT) {
+        Figure head = getHead();
+        Direction headDirection = head.getDirection();
+        if (headDirection == Direction.RIGHT) {
             head.incrementPosX(SPEED);
-        } else if (head.getDirection() == Direction.LEFT) {
+        } else if (headDirection == Direction.LEFT) {
             head.incrementPosX(-SPEED);
-        } else if (head.getDirection() == Direction.UP) {
+        } else if (headDirection == Direction.UP) {
             head.incrementPosY(-SPEED);
-        } else if (head.getDirection() == Direction.DOWN) {
+        } else if (headDirection == Direction.DOWN) {
             head.incrementPosY(SPEED);
         }
     }
 
     // Adds a body part to the tail of the snake
     public void grow() {
-        Object lastPart = body.get(body.size() - 1);
-        body.add(new Object(lastPart.getPosX(), lastPart.getPosY(), WIDTH, HEIGHT, lastPart.getDirection()));
+        Figure lastPart = body.get(body.size() - 1);
+        body.add(new Figure(lastPart.getPosX(), lastPart.getPosY(), WIDTH, HEIGHT, lastPart.getDirection()));
     }
 
     // Directs the snake up
@@ -120,15 +122,15 @@ public class Snake {
     }
 
     // returns the head, or the first body part of the snake
-    public Object getHead() {
+    public Figure getHead() {
         return body.get(0);
     }
 
-    public java.util.List<Object> getBody() {
+    public java.util.List<Figure> getBody() {
         return body;
     }
 
-    // Draws the Object on the Graphics object g
+    // Draws the Figure on the Graphics object g
     public void draw(Graphics graphics) {
         drawHead(graphics);
         drawBody(graphics);
@@ -137,7 +139,7 @@ public class Snake {
 
     // Draws the head of the snake
     private void drawHead(Graphics graphics) {
-        Object head = getHead();
+        Figure head = getHead();
         if (head.getDirection() == Direction.DOWN)
             graphics.drawImage(headImageDown,  head.getPosX() - WIDTH / 2,  head.getPosY() - HEIGHT / 2, WIDTH, HEIGHT, null);
         else if (head.getDirection() == Direction.UP)
@@ -151,48 +153,73 @@ public class Snake {
     // Draws the body of the snake (excluding head and tail of snake)
     private void drawBody(Graphics graphics) {
         for (int i = 1; i < body.size() - 1; i++) { // Does not draw head and tail, only parts in the middle
-            Object ahead = body.get(i - 1);
-            Object current = body.get(i);
-            Object behind = body.get(i + 1);
+            Direction aheadDirection = body.get(i - 1).getDirection();
+            Direction currentDirection = body.get(i).getDirection();
+            Direction behindDirection = body.get(i + 1).getDirection();
+            Figure current = body.get(i);
             // OR's signify to situations using the same image, first two are for general situations, next four for 2 immediate turns
-            if ((ahead.getDirection() == Direction.RIGHT && current.getDirection() == Direction.RIGHT && behind.getDirection() == Direction.UP) ||
-                    (ahead.getDirection() == Direction.DOWN && current.getDirection() == Direction.DOWN && behind.getDirection() == Direction.LEFT) ||
-                    (ahead.getDirection() == Direction.DOWN && current.getDirection() == Direction.RIGHT && behind.getDirection() == Direction.UP) ||
-                    (ahead.getDirection() == Direction.RIGHT && current.getDirection() == Direction.DOWN && behind.getDirection() == Direction.LEFT) ||
-                    (ahead.getDirection() == Direction.UP && current.getDirection() == Direction.RIGHT && behind.getDirection() == Direction.UP) ||
-                    (ahead.getDirection() == Direction.LEFT && current.getDirection() == Direction.DOWN && behind.getDirection() == Direction.LEFT))
+            if (isTurningDownRight(aheadDirection, currentDirection, behindDirection))
                 graphics.drawImage(downAndRightTurn, current.getPosX() - WIDTH / 2, current.getPosY() - HEIGHT / 2, WIDTH, HEIGHT, null);
-            else if ((ahead.getDirection() == Direction.RIGHT && current.getDirection() == Direction.RIGHT && behind.getDirection() == Direction.DOWN) ||
-                    (ahead.getDirection() == Direction.UP && current.getDirection() == Direction.UP && behind.getDirection() == Direction.LEFT) ||
-                    (ahead.getDirection() == Direction.UP && current.getDirection() == Direction.RIGHT && behind.getDirection() == Direction.DOWN) ||
-                    (ahead.getDirection() == Direction.RIGHT && current.getDirection() == Direction.UP && behind.getDirection() == Direction.LEFT) ||
-                    (ahead.getDirection() == Direction.DOWN && current.getDirection() == Direction.RIGHT && behind.getDirection() == Direction.DOWN) ||
-                    (ahead.getDirection() == Direction.LEFT && current.getDirection() == Direction.UP && behind.getDirection() == Direction.LEFT))
+            else if (isTurningUpAndRight(aheadDirection, currentDirection, behindDirection))
                 graphics.drawImage(upAndRightTurn, current.getPosX() - WIDTH / 2, current.getPosY() - HEIGHT / 2, WIDTH, HEIGHT, null);
-            else if ((ahead.getDirection() == Direction.LEFT && current.getDirection() == Direction.LEFT && behind.getDirection() == Direction.UP) ||
-                    (ahead.getDirection() == Direction.DOWN && current.getDirection() == Direction.DOWN && behind.getDirection() == Direction.RIGHT) ||
-                    (ahead.getDirection() == Direction.DOWN && current.getDirection() == Direction.LEFT && behind.getDirection() == Direction.UP) ||
-                    (ahead.getDirection() == Direction.LEFT && current.getDirection() == Direction.DOWN && behind.getDirection() == Direction.RIGHT) ||
-                    (ahead.getDirection() == Direction.RIGHT && current.getDirection() == Direction.DOWN && behind.getDirection() == Direction.RIGHT)||
-                    (ahead.getDirection() == Direction.UP && current.getDirection() == Direction.LEFT && behind.getDirection() == Direction.UP))
+            else if (isTurningDownAndLeft(aheadDirection, currentDirection, behindDirection))
                 graphics.drawImage(downAndLeftTurn, current.getPosX() - WIDTH / 2, current.getPosY() - HEIGHT / 2, WIDTH, HEIGHT, null);
-            else if ((ahead.getDirection() == Direction.LEFT && current.getDirection() == Direction.LEFT && behind.getDirection() == Direction.DOWN) ||
-                    (ahead.getDirection() == Direction.UP && current.getDirection() == Direction.UP && behind.getDirection() == Direction.RIGHT) ||
-                    (ahead.getDirection() == Direction.UP && current.getDirection() == Direction.LEFT && behind.getDirection() == Direction.DOWN)||
-                    (ahead.getDirection() == Direction.LEFT && current.getDirection() == Direction.UP && behind.getDirection() == Direction.RIGHT) ||
-                    (ahead.getDirection() == Direction.DOWN && current.getDirection() == Direction.LEFT && behind.getDirection() == Direction.DOWN) ||
-                    (ahead.getDirection() == Direction.RIGHT && current.getDirection() == Direction.UP && behind.getDirection() == Direction.RIGHT))
+            else if (isTurningUpAndLeft(aheadDirection, currentDirection, behindDirection))
                 graphics.drawImage(upAndLeftTurn, current.getPosX() - WIDTH / 2, current.getPosY() - HEIGHT / 2, WIDTH, HEIGHT, null);
-            else if (current.getDirection() == Direction.UP || current.getDirection() == Direction.DOWN)
+            else if (isGoingVertical(currentDirection))
                 graphics.drawImage(bodyImageVertical,  current.getPosX() - WIDTH / 2,  current.getPosY() - HEIGHT / 2, WIDTH, HEIGHT, null);
-            else if (current.getDirection() == Direction.RIGHT || current.getDirection() == Direction.LEFT)
+            else if (isGoingHorizontal(currentDirection))
                 graphics.drawImage(bodyImageHorizontal,  current.getPosX() - WIDTH / 2,  current.getPosY() - HEIGHT / 2, WIDTH, HEIGHT, null);
         }
     }
 
+    private boolean isGoingHorizontal(Direction currentDirection) {
+        return currentDirection == Direction.RIGHT || currentDirection == Direction.LEFT;
+    }
+
+    private boolean isGoingVertical(Direction currentDirection) {
+        return currentDirection == Direction.UP || currentDirection == Direction.DOWN;
+    }
+
+    private boolean isTurningUpAndLeft(Direction aheadDirection, Direction currentDirection, Direction behindDirection) {
+        return (aheadDirection == Direction.LEFT && currentDirection == Direction.LEFT && behindDirection == Direction.DOWN) ||
+                (aheadDirection == Direction.UP && currentDirection == Direction.UP && behindDirection == Direction.RIGHT) ||
+                (aheadDirection == Direction.UP && currentDirection == Direction.LEFT && behindDirection == Direction.DOWN)||
+                (aheadDirection == Direction.LEFT && currentDirection == Direction.UP && behindDirection == Direction.RIGHT) ||
+                (aheadDirection == Direction.DOWN && currentDirection == Direction.LEFT && behindDirection == Direction.DOWN) ||
+                (aheadDirection == Direction.RIGHT && currentDirection == Direction.UP && behindDirection == Direction.RIGHT);
+    }
+
+    private boolean isTurningDownAndLeft(Direction aheadDirection, Direction currentDirection, Direction behindDirection) {
+        return (aheadDirection == Direction.LEFT && currentDirection == Direction.LEFT && behindDirection == Direction.UP) ||
+                (aheadDirection == Direction.DOWN && currentDirection == Direction.DOWN && behindDirection == Direction.RIGHT) ||
+                (aheadDirection == Direction.DOWN && currentDirection == Direction.LEFT && behindDirection == Direction.UP) ||
+                (aheadDirection == Direction.LEFT && currentDirection == Direction.DOWN && behindDirection == Direction.RIGHT) ||
+                (aheadDirection == Direction.RIGHT && currentDirection == Direction.DOWN && behindDirection == Direction.RIGHT)||
+                (aheadDirection == Direction.UP && currentDirection == Direction.LEFT && behindDirection == Direction.UP);
+    }
+
+    private boolean isTurningDownRight(Direction aheadDirection, Direction currentDirection, Direction behindDirection) {
+        return (aheadDirection == Direction.RIGHT && currentDirection == Direction.RIGHT && behindDirection == Direction.UP) ||
+            (aheadDirection == Direction.DOWN && currentDirection == Direction.DOWN && behindDirection == Direction.LEFT) ||
+            (aheadDirection == Direction.DOWN && currentDirection == Direction.RIGHT && behindDirection == Direction.UP) ||
+            (aheadDirection == Direction.RIGHT && currentDirection == Direction.DOWN && behindDirection == Direction.LEFT) ||
+            (aheadDirection == Direction.UP && currentDirection == Direction.RIGHT && behindDirection == Direction.UP) ||
+            (aheadDirection == Direction.LEFT && currentDirection == Direction.DOWN && behindDirection == Direction.LEFT);
+    }
+
+    private boolean isTurningUpAndRight(Direction aheadDirection, Direction currentDirection, Direction behindDirection) {
+        return (aheadDirection == Direction.RIGHT && currentDirection == Direction.RIGHT && behindDirection == Direction.DOWN) ||
+                (aheadDirection == Direction.UP && currentDirection == Direction.UP && behindDirection == Direction.LEFT) ||
+                (aheadDirection == Direction.UP && currentDirection == Direction.RIGHT && behindDirection == Direction.DOWN) ||
+                (aheadDirection == Direction.RIGHT && currentDirection == Direction.UP && behindDirection == Direction.LEFT) ||
+                (aheadDirection == Direction.DOWN && currentDirection == Direction.RIGHT && behindDirection == Direction.DOWN) ||
+                (aheadDirection == Direction.LEFT && currentDirection == Direction.UP && behindDirection == Direction.LEFT);
+    }
+
     // Draws the tail of the snake
     private void drawTail(Graphics graphics) {
-        Object tail = body.get(body.size() - 1);
+        Figure tail = body.get(body.size() - 1);
         // to avoid double painting of tile, we reset it to background colour
         if (GamePanel.isCoordinateCheckerbox(tail.getPosX() - GamePanel.CHECKER_SIZE / 2, tail.getPosY() - GamePanel.CHECKER_SIZE / 2)) {
             GamePanel.paintCheckerBoardBox(graphics, tail.getPosX() - GamePanel.CHECKER_SIZE / 2, tail.getPosY() - GamePanel.CHECKER_SIZE / 2);
@@ -212,7 +239,7 @@ public class Snake {
 
     // Returns true if snake has collided with itself, otherwise returns false
     public boolean isSelfCollided() {
-        Object head = getHead();
+        Figure head = getHead();
         for (int i = 1; i < body.size(); i++) { // Skip over 1st element, which is head itself
             if (body.get(i).getPosX() == head.getPosX() && body.get(i).getPosY() == head.getPosY())
                 return true;
@@ -222,7 +249,7 @@ public class Snake {
 
     // returns true if any part of snake body contains coordinates posX and posY, otherwise returns false
     public boolean containsCoordinate(int posX, int posY) {
-        for (Object part:body) {
+        for (Figure part:body) {
             if (part.getPosX() == posX && part.getPosY() == posY)
                 return true;
         }

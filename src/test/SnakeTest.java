@@ -1,7 +1,7 @@
 package test;
 
 import com.sun.javafx.scene.traversal.Direction;
-import main.model.Object;
+import main.model.Figure;
 import main.model.Snake;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SnakeTest {
     private Snake snake;
-    private java.util.List<Object> body;
+    private java.util.List<Figure> body;
 
     @BeforeEach
     void setup() {
